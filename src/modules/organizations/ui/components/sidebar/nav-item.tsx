@@ -64,7 +64,7 @@ export const NavItem = ({
     router.push(href);
   };
   return (
-    <AccordionItem value={organization.id}>
+    <AccordionItem id={organization.id} value={organization.id}>
       <AccordionTrigger
         onClick={() => onExpand(organization.id)}
         className={cn(
