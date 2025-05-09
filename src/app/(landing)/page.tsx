@@ -1,10 +1,10 @@
+import Link from "next/link";
 import { Medal } from "lucide-react";
 import localFont from "next/font/local";
 import { Poppins } from "next/font/google";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const headingFont = localFont({
   src: [
@@ -58,11 +58,8 @@ const MarketingPage = () => {
         <div className="flex items-center justify-center space-x-4 mt-8">
           <Button size="lg" className="h-12 px-8">
             <Link href="/sign-up" className="text-white">
-              Get Started
+              Get Started for Free
             </Link>
-          </Button>
-          <Button size="lg" variant="outline" className="h-12 px-8">
-            <Link href="/sign-up">Free Trial</Link>
           </Button>
         </div>
       </div>
