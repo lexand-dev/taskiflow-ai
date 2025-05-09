@@ -8,6 +8,11 @@ import {
   pgEnum,
   uuid
 } from "drizzle-orm/pg-core";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema
+} from "drizzle-zod";
 
 // --- ENUMS ---
 export const action = pgEnum("action", ["CREATE", "UPDATE", "DELETE"]);
@@ -29,6 +34,10 @@ export const boards = pgTable("boards", {
     .defaultNow()
     .notNull()
 });
+
+export const boardSelectSchema = createSelectSchema(boards);
+export const boardInsertSchema = createInsertSchema(boards);
+export const boardUpdateSchema = createUpdateSchema(boards);
 
 export const lists = pgTable(
   "lists",
