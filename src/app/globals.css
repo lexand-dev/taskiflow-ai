@@ -32,7 +32,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary: var(--color-violet-500);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -118,5 +118,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .gradient-bg {
+    background: linear-gradient(to bottom, rgba(240, 240, 255, 0.5), rgba(230, 240, 255, 0.8));
+  }
+  .dark .gradient-bg {
+    background: linear-gradient(to bottom, rgba(10, 10, 20, 0.5), rgba(20, 10, 30, 0.8));
   }
 }
