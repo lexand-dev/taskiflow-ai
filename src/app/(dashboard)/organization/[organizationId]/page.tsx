@@ -1,4 +1,4 @@
-import { BoardView } from "@/modules/boards/ui/views/board-view";
+import { BoardList } from "@/modules/boards/ui/sections/board-list";
 
 import { HydrateClient, trpc } from "@/trpc/server";
 
@@ -15,7 +15,7 @@ const OrganizationIdPage = async ({ params }: PageProps) => {
   });
   return (
     <HydrateClient>
-      <BoardView organizationId={organizationId} />
+      <BoardList organizationId={organizationId} />
     </HydrateClient>
   );
 };

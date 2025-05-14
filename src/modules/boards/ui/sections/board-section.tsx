@@ -1,0 +1,55 @@
+"use client";
+
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
+import { trpc } from "@/trpc/client";
+import { BoardNavbar } from "../components/board-navbar";
+
+interface BoardSectionProps {
+  boardId: string;
+}
+
+export const BoardSection = ({ boardId }: BoardSectionProps) => {
+  return (
+    <Suspense fallback={<BoardSectionSkeleton />}>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        <BoardSectionSuspense boardId={boardId} />
+      </ErrorBoundary>
+    </Suspense>
+  );
+};
+
+const BoardSectionSkeleton = () => {
+  return (
+    <div className="relative bg-cover bg-center bg-no-repeat h-full">
+      <div className="absolute inset-0 bg-black/10" />
+      <main className="relative pt-28 h-full">
+        <div className="pt-28 h-full overflow-x-auto animate-pulse">
+          <div className="h-6 w-1/2 bg-gray-300 rounded" />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export const BoardSectionSuspense = ({ boardId }: BoardSectionProps) => {
+  const [board] = trpc.boards.getOne.useSuspenseQuery({
+    id: boardId
+  });
+
+  return (
+    <main
+      className="relative bg-cover bg-center bg-no-repeat h-full"
+      style={{ backgroundImage: `url(${board.imageFullUrl})` }}
+    >
+      <BoardNavbar boardId={board.id} />
+      <div className="absolute inset-0 bg-black/10" />
+      <section className="relative pt-28 h-screen">
+        <div className="pt-28 h-full overflow-x-auto">
+          <div className="p-4 h-full overflow-x-auto"></div>
+        </div>
+      </section>
+    </main>
+  );
+};

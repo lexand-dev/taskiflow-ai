@@ -20,7 +20,7 @@ export const entityType = pgEnum("entity_type", ["BOARD", "LIST", "CARD"]);
 
 export const boards = pgTable("boards", {
   id: uuid("id").primaryKey().defaultRandom(),
-  orgId: varchar("org_id", { length: 255 }),
+  orgId: varchar("org_id", { length: 255 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   imageId: varchar("image_id", { length: 255 }),

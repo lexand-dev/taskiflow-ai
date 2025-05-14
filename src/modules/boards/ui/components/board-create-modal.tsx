@@ -1,9 +1,10 @@
-import { toast } from "sonner";
-
 import { z } from "zod";
-import { FormPicker } from "./form-picker";
-import { ResponsiveModal } from "@/components/responsive-modal";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { HelpCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Form,
   FormControl,
@@ -12,14 +13,15 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { trpc } from "@/trpc/client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { AiFeaturesAlert } from "./ai-features-alert";
+import { ResponsiveModal } from "@/components/responsive-modal";
+
 import { Hint } from "./hint";
-import { HelpCircle } from "lucide-react";
+import { trpc } from "@/trpc/client";
+import { FormPicker } from "./form-picker";
+import { AiFeaturesAlert } from "./ai-features-alert";
 
 interface BoardCreateModalProps {
   open: boolean;
@@ -36,6 +38,9 @@ export const BoardCreateModal = ({
   open,
   onOpenChange
 }: BoardCreateModalProps) => {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+
   // TODO: Add pro modal
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,16 +51,13 @@ export const BoardCreateModal = ({
     }
   });
 
-  const utils = trpc.useUtils();
   const create = trpc.boards.create.useMutation({
     onSuccess: (data) => {
-      console.log({
-        data
-      });
-      toast.success("Boad created");
       utils.boards.getMany.invalidate();
+      toast.success("Boad created");
       form.reset();
       onOpenChange(false);
+      router.push(`/board/${data.id}`);
     },
     onError: (e) => {
       console.error(e);

@@ -1,8 +1,8 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
 import { cache } from "react";
+import superjson from "superjson";
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db";
+import { initTRPC, TRPCError } from "@trpc/server";
+
 /* import { users } from "@/db/schema";
 import { eq } from "drizzle-orm"; */
 /* import { ratelimit } from "@/lib/ratelimit"; */
