@@ -26,7 +26,8 @@ export const boardsRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string(),
-        image: z.string()
+        image: z.string(),
+        description: z.string().optional()
       })
     )
     .mutation(async ({ input }) => {
@@ -54,6 +55,7 @@ export const boardsRouter = createTRPCRouter({
         .insert(boards)
         .values({
           title: input.title,
+          description: input.description,
           orgId,
           imageId,
           imageThumbUrl,

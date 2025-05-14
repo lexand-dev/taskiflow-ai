@@ -16,6 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { AiFeaturesAlert } from "./ai-features-alert";
+import { Hint } from "./hint";
+import { HelpCircle } from "lucide-react";
 
 interface BoardCreateModalProps {
   open: boolean;
@@ -24,7 +28,8 @@ interface BoardCreateModalProps {
 
 const formSchema = z.object({
   image: z.string().min(1),
-  title: z.string().min(1)
+  title: z.string().min(2),
+  description: z.string().min(2)
 });
 
 export const BoardCreateModal = ({
@@ -36,7 +41,8 @@ export const BoardCreateModal = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      image: ""
+      image: "",
+      description: ""
     }
   });
 
@@ -58,7 +64,6 @@ export const BoardCreateModal = ({
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     create.mutate(values);
   };
 
@@ -92,9 +97,41 @@ export const BoardCreateModal = ({
                 );
               }}
             />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <div className="flex items-center gap-x-1">
+                      <FormLabel>Description</FormLabel>
+                      <Hint
+                        side="top"
+                        description="Provide more details for improved AI assistance."
+                      >
+                        <HelpCircle className="size-3.5 mt-1" />
+                      </Hint>
+                    </div>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Describe your new project"
+                        rows={4}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
           </div>
+          <AiFeaturesAlert />
           <div className="flex justify-end">
-            <Button disabled={create.isPending} type="submit">
+            <Button
+              disabled={create.isPending}
+              type="submit"
+              className="text-white"
+            >
               Create
             </Button>
           </div>

@@ -22,6 +22,7 @@ export const boards = pgTable("boards", {
   id: uuid("id").primaryKey().defaultRandom(),
   orgId: varchar("org_id", { length: 255 }),
   title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
   imageId: varchar("image_id", { length: 255 }),
   imageThumbUrl: text("image_thumb_url"),
   imageFullUrl: text("image_full_url"),
