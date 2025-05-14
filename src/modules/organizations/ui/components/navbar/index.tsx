@@ -4,14 +4,20 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 
 import { MobileSidebar } from "../mobile-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
+import { auth } from "@clerk/nextjs/server";
 
-export const Navbar = () => {
+export const Navbar = async () => {
+  const { orgId } = await auth();
+
   return (
     <nav className="fixed z-50 top-0 px-4 w-full h-14 border-b shadow-sm flex items-center bg-background">
       <MobileSidebar />
       <div className="flex items-center gap-x-4">
         <div className="hidden md:flex">
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href={`/organization/${orgId}`}
+            className="flex items-center gap-2"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
               <BrainCircuitIcon className="h-5 w-5 text-primary" />
             </div>

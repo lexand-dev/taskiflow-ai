@@ -2,27 +2,37 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useFormStatus } from "react-dom";
 import { useEffect, useState } from "react";
+import { Control } from "react-hook-form";
 import { Check, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { unsplash } from "@/lib/unsplash";
-import { FormErrors } from "./form-errors";
 import { defaultImages } from "@/constants/images";
 
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+
 interface FormPickerProps {
-  id: string;
-  errors?: Record<string, string[] | undefined>;
+  name: string;
+  control: Control<any>;
+  label?: string;
+  disabled?: boolean;
 }
 
-export const FormPicker = ({ id, errors }: FormPickerProps) => {
-  const { pending } = useFormStatus();
-
-  const [images, setImages] =
-    useState<Array<Record<string, any>>>(defaultImages);
+export const FormPicker = ({
+  name,
+  control,
+  label,
+  disabled
+}: FormPickerProps) => {
+  const [images, setImages] = useState(defaultImages);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedImageId, setSelectedImageId] = useState(null);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -39,7 +49,12 @@ export const FormPicker = ({ id, errors }: FormPickerProps) => {
           console.error("Failed to get images from Unsplash");
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching images:", error);
+
+        if (error instanceof Response) {
+          const text = await error.text();
+          console.log("Unsplash API error body:", text);
+        }
         setImages(defaultImages);
       } finally {
         setIsLoading(false);
@@ -58,51 +73,54 @@ export const FormPicker = ({ id, errors }: FormPickerProps) => {
   }
 
   return (
-    <div className="relative">
-      <div className="grid grid-cols-3 gap-2 mb-2">
-        {images.map((image) => (
-          <div
-            key={image.id}
-            className={cn(
-              "cursor-pointer relative aspect-video group hover:opacity-75 transition bg-muted",
-              pending && "opacity-50 hover:opacity-50 cursor-auto"
-            )}
-            onClick={() => {
-              setSelectedImageId(image.id);
-            }}
-          >
-            <input
-              readOnly
-              type="radio"
-              id={id}
-              name={id}
-              className="hidden"
-              checked={selectedImageId === image.id}
-              disabled={pending}
-              value={`${image.id}|${image.urls.thumb}|${image.urls.full}|${image.links.html}|${image.user.name}`}
-            />
-            <Image
-              src={image.urls.thumb}
-              alt="Unsplash image"
-              className="object-cover rounded-sm"
-              fill
-            />
-            {selectedImageId === image.id && (
-              <div className="absolute inset-y-0 h-full w-full bg-black/30 flex items-center justify-center">
-                <Check className="h-4 w-4 text-white" />
-              </div>
-            )}
-            <Link
-              href={image.links.html}
-              target="_blank"
-              className="opacity-0 group-hover:opacity-100 absolute bottom-0 w-full text-[10px] truncate text-white hover:underline p-1 bg-black/50"
-            >
-              {image.user.name}
-            </Link>
-          </div>
-        ))}
-      </div>
-      <FormErrors id="image" errors={errors} />
-    </div>
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          {label && <FormLabel>{label}</FormLabel>}
+          <FormControl>
+            <div className="grid grid-cols-3 gap-2 mb-2">
+              {images.map((image) => {
+                const value = `${image.id}|${image.urls.thumb}|${image.urls.full}|${image.links.html}|${image.user.name}`;
+                const selected = field.value?.startsWith(`${image.id}|`);
+
+                return (
+                  <div
+                    key={image.id}
+                    className={cn(
+                      "cursor-pointer relative aspect-video group hover:opacity-75 transition bg-muted",
+                      disabled &&
+                        "opacity-50 hover:opacity-50 cursor-not-allowed"
+                    )}
+                    onClick={() => !disabled && field.onChange(value)}
+                  >
+                    <Image
+                      src={image.urls.thumb}
+                      alt="Unsplash image"
+                      className="object-cover rounded-sm"
+                      fill
+                    />
+                    {selected && (
+                      <div className="absolute inset-y-0 h-full w-full bg-black/30 flex items-center justify-center">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                    <Link
+                      href={image.links.html}
+                      target="_blank"
+                      className="opacity-0 group-hover:opacity-100 absolute bottom-0 w-full text-[10px] truncate text-white hover:underline p-1 bg-black/50"
+                    >
+                      {image.user.name}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 };

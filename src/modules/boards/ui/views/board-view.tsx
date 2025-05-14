@@ -1,39 +1,28 @@
 "use client";
 import Link from "next/link";
 import { HelpCircle, PlusIcon, User2 } from "lucide-react";
-import { desc, eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-
-import { db } from "@/db";
-import { boards, boardSelectSchema } from "@/db/schema";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { MAX_FREE_BOARDS } from "@/constants/boards";
-import { CreateBoard } from "../sections/create-board";
+
 import { Hint } from "../components/hint";
 import { BoardCreateModal } from "../components/board-create-modal";
-import { useActionState, useState } from "react";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { createBoard } from "../../actions/create-board";
+import { trpc } from "@/trpc/client";
+import { useState } from "react";
 
 interface BoardViewProps {
-  id: string;
-  orgId: string;
-  title: string;
-  imageId: string;
-  imageThumbUrl: string;
-  imageFullUrl: string;
-  imageUserName: string;
-  imageLinkHTML: string;
-  createdAt: Date;
-  updatedAt: Date;
+  organizationId: string;
 }
 
-export const BoardView = ({ data }: { data: BoardViewProps[] }) => {
+export const BoardView = ({ organizationId }: BoardViewProps) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [boards] = trpc.boards.getMany.useSuspenseQuery({
+    orgId: organizationId
+  });
 
   return (
     <div className="space-y-4">
@@ -46,7 +35,7 @@ export const BoardView = ({ data }: { data: BoardViewProps[] }) => {
         Your boards
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {data.map((board) => (
+        {boards.map((board) => (
           <Link
             key={board.id}
             href={`/board/${board.id}`}
