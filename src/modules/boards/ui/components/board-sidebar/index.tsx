@@ -9,9 +9,10 @@ import {
   SidebarGroupContent,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
+import { BoardDescriptionForm } from "../board-descrip-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const BoardSidebar = () => {
+export const BoardSidebar = ({ boardId }: { boardId: string }) => {
   return (
     <Sidebar
       collapsible="offcanvas"
@@ -23,7 +24,7 @@ export const BoardSidebar = () => {
       >
         <SidebarContent>
           <SidebarGroup className="py-6 px-4">
-            <SidebarGroupContent className="flex flex-col gap-y-4">
+            <SidebarGroupContent className="flex flex-col gap-y-6">
               <SidebarMenuItem className="list-none">
                 <Card className="py-4 h-64">
                   <CardHeader>
@@ -32,7 +33,9 @@ export const BoardSidebar = () => {
                       <span>Description</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>constent</CardContent>
+                  <CardContent>
+                    <BoardDescriptionForm boardId={boardId} />
+                  </CardContent>
                 </Card>
               </SidebarMenuItem>
 

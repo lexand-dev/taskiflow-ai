@@ -2,9 +2,9 @@ import { z } from "zod";
 import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/db";
-import { boards } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
+import { boards, boardUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const boardsRouter = createTRPCRouter({
@@ -98,27 +98,50 @@ export const boardsRouter = createTRPCRouter({
       return data;
     }),
   update: protectedProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        boardId: z.string()
-      })
-    )
+    .input(boardUpdateSchema)
     .mutation(async ({ input }) => {
       const { orgId } = await auth();
-      const { boardId, title } = input;
+      const {
+        id,
+        title,
+        description,
+        updatedAt,
+        imageFullUrl,
+        imageId,
+        imageLinkHTML,
+        imageThumbUrl,
+        imageUserName
+      } = input;
 
       if (!orgId) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
+      if (!id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Board ID is required"
+        });
+      }
+
       const [updateBoard] = await db
         .update(boards)
         .set({
-          title: title
+          title,
+          description,
+          updatedAt,
+          imageFullUrl,
+          imageId,
+          imageLinkHTML,
+          imageThumbUrl,
+          imageUserName
         })
-        .where(and(eq(boards.id, boardId), eq(boards.orgId, orgId)))
+        .where(and(eq(boards.id, id), eq(boards.orgId, orgId)))
         .returning();
+
+      if (!updateBoard) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
 
       return updateBoard;
     }),
@@ -140,6 +163,10 @@ export const boardsRouter = createTRPCRouter({
         .delete(boards)
         .where(and(eq(boards.id, boardId), eq(boards.orgId, orgId)))
         .returning();
+
+      if (!deleteBoard) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
 
       return deleteBoard;
     })

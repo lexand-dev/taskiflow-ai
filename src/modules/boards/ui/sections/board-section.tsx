@@ -45,7 +45,7 @@ export const BoardSectionSuspense = ({ boardId }: BoardSectionProps) => {
       style={{ backgroundImage: `url(${board.imageFullUrl})` }}
     >
       <BoardNavbar boardId={board.id} />
-      <BoardSidebar />
+      <BoardSidebar boardId={boardId} />
       <div className="flex-1 overflow-y-auto">
         <div className="absolute inset-0 bg-black/10" />
         <section className="relative pt-28 h-screen"></section>
