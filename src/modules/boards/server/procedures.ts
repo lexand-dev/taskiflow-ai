@@ -26,6 +26,10 @@ export const boardsRouter = createTRPCRouter({
         .from(boards)
         .where(eq(boards.id, input.id));
 
+      if (!data) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
       return data;
     }),
   getMany: protectedProcedure
@@ -41,6 +45,9 @@ export const boardsRouter = createTRPCRouter({
         .where(eq(boards.orgId, input.orgId))
         .orderBy(desc(boards.createdAt));
 
+      if (!data) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
       return data;
     }),
   create: protectedProcedure
