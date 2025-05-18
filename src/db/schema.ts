@@ -104,6 +104,10 @@ export const cards = pgTable(
   ]
 );
 
+export const cardUpdateSchema = createUpdateSchema(cards);
+export const cardInsertSchema = createInsertSchema(cards);
+export const cardSelectSchema = createSelectSchema(cards);
+
 // Definición de las relaciones para cards
 export const cardsRelations = relations(cards, ({ one }) => ({
   list: one(lists, {
