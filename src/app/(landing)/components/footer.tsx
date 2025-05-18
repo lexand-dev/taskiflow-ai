@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BrainCircuitIcon } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -8,7 +7,7 @@ export const Footer = () => {
       <div className="md:max-w-screen-2xl mx-auto flex items-center w-full justify-between">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-            <BrainCircuitIcon className="h-5 w-5 text-primary" />
+            <img className="size-6 text-primary" src="/logo.svg" />
           </div>
           <span className="hidden font-semibold sm:inline-block">
             Taskiflow AI
