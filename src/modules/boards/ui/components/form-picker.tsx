@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Control, FieldValues } from "react-hook-form";
+import { Control } from "react-hook-form";
 import { Check, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -21,7 +21,8 @@ import {
 
 interface FormPickerProps {
   name: string;
-  control: Control<FieldValues>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
   label?: string;
   disabled?: boolean;
 }

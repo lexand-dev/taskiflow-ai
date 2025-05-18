@@ -3,11 +3,11 @@ import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
-import { desc, eq, and, asc } from "drizzle-orm";
-import { lists, listUpdateSchema, boards, cards } from "@/db/schema";
+import { desc, eq, asc } from "drizzle-orm";
+import { lists, cards, cardUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
-export const listsRouter = createTRPCRouter({
+export const cardsRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(
       z.object({
@@ -22,10 +22,10 @@ export const listsRouter = createTRPCRouter({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const [data] = await db.select().from(lists).where(eq(lists.id, id));
+      const [data] = await db.select().from(cards).where(eq(cards.id, id));
 
       if (!data) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+        throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
       }
 
       return data;
@@ -78,7 +78,7 @@ export const listsRouter = createTRPCRouter({
     .input(
       z.object({
         title: z.string(),
-        boardId: z.string()
+        listId: z.string()
       })
     )
     .mutation(async ({ input }) => {
@@ -90,41 +90,42 @@ export const listsRouter = createTRPCRouter({
         });
       }
 
-      const [board] = await db
-        .select()
-        .from(boards)
-        .where(and(eq(boards.id, input.boardId), eq(boards.orgId, orgId)));
-      if (!board) {
+      const [listExists] = await db
+        .select({ id: lists.id })
+        .from(lists)
+        .where(eq(lists.id, input.listId));
+
+      if (!listExists) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Board not found"
+          message: "List not found"
         });
       }
 
-      const [lastList] = await db
-        .select({ order: lists.order })
-        .from(lists)
-        .where(eq(lists.boardId, input.boardId))
-        .orderBy(desc(lists.order));
+      const [lastCard] = await db
+        .select({ order: cards.order })
+        .from(cards)
+        .where(eq(cards.listId, input.listId))
+        .orderBy(desc(cards.order));
 
-      const newOrder = lastList ? lastList.order + 1 : 1;
+      const newOrder = lastCard ? lastCard.order + 1 : 1;
 
-      const [list] = await db
-        .insert(lists)
+      const [newCard] = await db
+        .insert(cards)
         .values({
           title: input.title,
-          boardId: input.boardId,
+          listId: input.listId,
           order: newOrder
         })
         .returning();
 
-      return list;
+      return newCard;
     }),
   update: protectedProcedure
-    .input(listUpdateSchema)
+    .input(cardUpdateSchema)
     .mutation(async ({ input }) => {
       const { orgId } = await auth();
-      const { id, title, order, boardId } = input;
+      const { id, ...updateData } = input;
 
       if (!orgId) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -133,62 +134,59 @@ export const listsRouter = createTRPCRouter({
       if (!id) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "List ID is required"
+          message: "Card ID is required"
         });
       }
 
-      const [updateList] = await db
-        .update(lists)
+      const [updatedCard] = await db
+        .update(cards)
         .set({
-          title,
-          order,
-          boardId,
+          ...updateData,
           updatedAt: new Date()
         })
-        .where(eq(lists.id, id))
+        .where(eq(cards.id, id))
         .returning();
 
-      if (!updateList) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+      if (!updatedCard) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
       }
 
-      return updateList;
+      return updatedCard;
     }),
   delete: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
-        boardId: z.string()
+        id: z.string()
       })
     )
     .mutation(async ({ input }) => {
       const { orgId } = await auth();
-      const { id, boardId } = input;
+      const { id } = input;
 
       if (!orgId) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const [deleteList] = await db
-        .delete(lists)
-        .where(and(eq(lists.id, id), eq(lists.boardId, boardId)))
+      const [deletedCard] = await db
+        .delete(cards)
+        .where(eq(cards.id, id))
         .returning();
 
-      if (!deleteList) {
-        throw new TRPCError({ code: "NOT_FOUND" });
+      if (!deletedCard) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
       }
 
-      return deleteList;
+      return deletedCard;
     }),
-  updateListOrder: protectedProcedure
+  updateCardOrder: protectedProcedure
     .input(
       z.object({
         items: z.array(
           z.object({
             id: z.string(),
             order: z.number(),
-            title: z.string().optional(),
-            boardId: z.string().optional()
+            listId: z.string(),
+            title: z.string().optional()
           })
         )
       })
@@ -203,11 +201,12 @@ export const listsRouter = createTRPCRouter({
 
       const transaction = items.map((item) =>
         db
-          .update(lists)
+          .update(cards)
           .set({
-            order: item.order
+            order: item.order,
+            listId: item.listId
           })
-          .where(eq(lists.id, item.id))
+          .where(eq(cards.id, item.id))
       );
 
       await Promise.all(transaction);

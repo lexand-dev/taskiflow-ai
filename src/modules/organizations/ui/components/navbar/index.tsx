@@ -1,31 +1,24 @@
-import Link from "next/link";
-import { BrainCircuitIcon } from "lucide-react";
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 
 import { MobileSidebar } from "../mobile-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
-import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export const Navbar = async () => {
-  const { orgId } = await auth();
-
   return (
     <nav className="fixed z-50 top-0 px-4 w-full h-14 border-b shadow-sm flex items-center bg-background">
       <MobileSidebar />
       <div className="flex items-center gap-x-4">
-        <div className="hidden md:flex">
-          <Link
-            href={`/organization/${orgId}`}
-            className="flex items-center gap-2"
-          >
+        <Link href="/">
+          <div className="hidden md:flex">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-              <BrainCircuitIcon className="h-5 w-5 text-primary" />
+              <img className="size-6 text-primary" src="/logo.svg" />
             </div>
             <span className="hidden font-semibold sm:inline-block">
               Taskiflow AI
             </span>
-          </Link>
-        </div>
+          </div>
+        </Link>
       </div>
       <div className="ml-auto flex items-center gap-x-2">
         <OrganizationSwitcher

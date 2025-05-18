@@ -15,7 +15,6 @@ import { trpc } from "@/trpc/client";
 import { FormSubmit } from "@/modules/boards/ui/components/form-submit";
 
 interface ListOptionsProps {
-  // data: List;
   data: {
     id: string;
     title: string;
@@ -25,10 +24,12 @@ interface ListOptionsProps {
 }
 
 export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
+  const utils = trpc.useUtils();
   const closeRef = useRef<ElementRef<"button">>(null);
 
   const remove = trpc.lists.delete.useMutation({
     onSuccess: (data) => {
+      utils.lists.getMany.invalidate();
       toast.success(`List "${data.title}" deleted.`);
       closeRef.current?.click();
     },
@@ -91,7 +92,12 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         <Separator />
         <form action={onDelete}>
           <input hidden name="id" id="id" value={data.id} />
-          <input hidden name="boardId" id="boardId" value={data.boardId} />
+          <input
+            hidden
+            name="boardId"
+            id="boardId"
+            defaultValue={data.boardId}
+          />
           <FormSubmit
             variant="ghost"
             className="rounded-none w-full h-auto p-2 px-5 justify-start font-normal text-sm"

@@ -18,7 +18,7 @@ export const BoardOptions = ({ isLoading, onDelete }: BoardOptionsProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className="h-auto w-auto p-2" variant="transparent">
+        <Button className="h-auto w-auto p-2 text-white" variant="transparent">
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </PopoverTrigger>

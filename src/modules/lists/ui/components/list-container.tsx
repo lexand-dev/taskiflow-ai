@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 
-/* import { updateCardOrder } from "@/actions/update-card-order"; */
 import { ListWithCards } from "../../types";
 
 import { toast } from "sonner";
 import { ListForm } from "./list-form";
 import { ListItem } from "./list-item";
 import { trpc } from "@/trpc/client";
+import { BoardSidebar } from "@/modules/boards/ui/components/board-sidebar";
 
 interface ListContainerProps {
   data: ListWithCards;
+  boardId: string;
 }
 
 function reorder<T>(list: T[], startIndex: number, endIndex: number) {
@@ -22,7 +23,7 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
   return result;
 }
 
-export const ListContainer = ({ data }: ListContainerProps) => {
+export const ListContainer = ({ data, boardId }: ListContainerProps) => {
   const [orderedData, setOrderedData] = useState(data);
 
   const updateListOrder = trpc.lists.updateListOrder.useMutation({
@@ -35,14 +36,15 @@ export const ListContainer = ({ data }: ListContainerProps) => {
     }
   });
 
-  /*   const { execute: executeUpdateCardOrder } = useAction(updateCardOrder, {
+  const updateCardOrder = trpc.cards.updateCardOrder.useMutation({
     onSuccess: () => {
       toast.success("Card order updated");
     },
     onError: (error) => {
-      toast.error(error);
+      console.error(error);
+      toast.error("Something went wrong");
     }
-  }); */
+  });
 
   useEffect(() => {
     setOrderedData(data);
@@ -112,7 +114,7 @@ export const ListContainer = ({ data }: ListContainerProps) => {
         sourceList.cards = reorderedCards;
 
         setOrderedData(newOrderedData);
-        /*         executeUpdateCardOrder({ items: reorderedCards, boardId }); */
+        updateCardOrder.mutate({ items: reorderedCards });
       } else {
         // Moving the card to another list
         // Remove the card from the source list and add it to the destination list
@@ -134,32 +136,36 @@ export const ListContainer = ({ data }: ListContainerProps) => {
         });
 
         setOrderedData(newOrderedData);
-        /*         executeUpdateCardOrder({
-          items: destinationList.cards,
-          boardId
-        }); */
+        updateCardOrder.mutate({
+          items: destinationList.cards
+        });
       }
     }
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="lists" type="list" direction="horizontal">
-        {(provided) => (
-          <ol
-            className="flex gap-x-3 h-full"
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {orderedData.map((list, index) => (
-              <ListItem key={list.id} data={list} index={index} />
-            ))}
-            {provided.placeholder}
-            <ListForm />
-            <div className="flex-shrink-0 w-1"></div>
-          </ol>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <div className="flex h-full gap-x-1">
+        <BoardSidebar boardId={boardId} />
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="lists" type="list" direction="horizontal">
+            {(provided) => (
+              <ol
+                className="flex gap-x-3 h-full"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {orderedData.map((list, index) => (
+                  <ListItem key={list.id} data={list} index={index} />
+                ))}
+                {provided.placeholder}
+                <ListForm />
+                <div className="flex-shrink-0 w-1"></div>
+              </ol>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    </>
   );
 };

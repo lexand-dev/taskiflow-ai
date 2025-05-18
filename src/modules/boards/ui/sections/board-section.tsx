@@ -5,7 +5,6 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { trpc } from "@/trpc/client";
 import { BoardNavbar } from "../components/board-navbar";
-import { BoardSidebar } from "../components/board-sidebar";
 import { ListContainer } from "@/modules/lists/ui/components/list-container";
 
 interface BoardSectionProps {
@@ -49,12 +48,11 @@ export const BoardSectionSuspense = ({ boardId }: BoardSectionProps) => {
       style={{ backgroundImage: `url(${board.imageFullUrl})` }}
     >
       <BoardNavbar boardId={board.id} />
-      <BoardSidebar boardId={board.id} />
       <div className="flex-1 overflow-y-auto">
         <div className="absolute inset-0 bg-black/10" />
         <section className="relative pt-28 h-screen">
-          <div className="p-4 h-full overflow-x-auto">
-            <ListContainer data={lists} />
+          <div className="py-4 px-1 h-full overflow-x-auto">
+            <ListContainer data={lists} boardId={board.id} />
           </div>
         </section>
       </div>

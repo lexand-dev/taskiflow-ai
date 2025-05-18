@@ -1,17 +1,14 @@
 "use client";
 
-import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { ElementRef, useRef, useState } from "react";
+import { Draggable, Droppable } from "@hello-pangea/dnd";
 
 import { cn } from "@/lib/utils";
-/* import { ListWithCards } from "@/types"; */
-
-/* import { CardForm } from "./card-form";
-import { CardItem } from "./card-item"; */
 import { ListHeader } from "./list-header";
+import { CardForm } from "@/modules/cards/ui/components/card-form";
+import { CardItem } from "@/modules/cards/ui/components/card-item";
 
-interface ListItemeProps {
-  // data: ListWithCards;
+interface ListProps {
   cards: {
     id: string;
     title: string;
@@ -29,7 +26,7 @@ interface ListItemeProps {
   updatedAt: Date;
 }
 interface ListItemProps {
-  data: ListItemeProps;
+  data: ListProps;
   index: number;
 }
 
@@ -59,7 +56,7 @@ export const ListItem = ({ data, index }: ListItemProps) => {
         >
           <div
             {...provided.dragHandleProps}
-            className="w-full rounded-md bg-[#f1f2f4] shadow-md pb-2"
+            className="w-full rounded-md bg-primary-foreground shadow-md pb-2"
           >
             <ListHeader onAddCard={enableEditing} data={data} />
             <Droppable droppableId={data.id} type="card">
@@ -72,20 +69,20 @@ export const ListItem = ({ data, index }: ListItemProps) => {
                     data.cards.length > 0 ? "mt-2" : "mt-0"
                   )}
                 >
-                  {/* {data.cards.map((card, index) => (
+                  {data.cards.map((card, index) => (
                     <CardItem index={index} key={card.id} data={card} />
-                  ))} */}
+                  ))}
                   {provided.placeholder}
                 </ol>
               )}
             </Droppable>
-            {/* <CardForm
+            <CardForm
               listId={data.id}
               ref={textareaRef}
               isEditing={isEditing}
               enableEditing={enableEditing}
               disableEditing={disableEditing}
-            /> */}
+            />
           </div>
         </li>
       )}

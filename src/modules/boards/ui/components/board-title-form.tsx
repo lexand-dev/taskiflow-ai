@@ -62,16 +62,20 @@ export const BoardTitleForm = ({ boardId }: BoardTitleFormProps) => {
 
   if (isEditing) {
     return (
-      <form action={onSubmit} className="flex items-center gap-x-2">
+      <form
+        action={onSubmit}
+        ref={formRef}
+        className="flex items-center gap-x-2"
+      >
         <FormInput
           id="title"
           ref={inputRef}
           defaultValue={title}
           onBlur={onBlur}
           className="text-lg font-bold px-[7px] py-1 h-7 bg-transparent
-          focus-visible:outline-none focus-visible:ring-transparent border-none"
+          focus-visible:outline-none focus-visible:ring-transparent border-none text-white"
         />
-        <Button size="sm" type="submit">
+        <Button className="text-white" size="sm" type="submit">
           Save
         </Button>
       </form>
@@ -82,7 +86,7 @@ export const BoardTitleForm = ({ boardId }: BoardTitleFormProps) => {
     <Button
       onClick={enableEditing}
       variant="transparent"
-      className="font-bold text-lg h-auto w-auto p-1 px-2"
+      className="font-bold text-lg h-auto w-auto p-1 px-2 text-white"
     >
       {title}
     </Button>
