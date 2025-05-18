@@ -3,13 +3,15 @@ import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { MobileSidebar } from "../mobile-sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 export const Navbar = async () => {
+  const { orgId } = await auth();
   return (
     <nav className="fixed z-50 top-0 px-4 w-full h-14 border-b shadow-sm flex items-center bg-background">
       <MobileSidebar />
       <div className="flex items-center gap-x-4">
-        <Link href="/">
+        <Link href={`/organization/${orgId}`}>
           <div className="hidden md:flex">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
               <img className="size-6 text-primary" src="/logo.svg" />

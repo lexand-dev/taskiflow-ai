@@ -2,11 +2,6 @@ import { cache } from "react";
 import superjson from "superjson";
 import { auth } from "@clerk/nextjs/server";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { ratelimit } from "@/lib/ratelimit";
-
-/* import { users } from "@/db/schema";
-import { eq } from "drizzle-orm"; */
-/* import { ratelimit } from "@/lib/ratelimit"; */
 
 export const createTRPCContext = cache(async () => {
   const { userId } = await auth();
@@ -39,13 +34,13 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(
     });
   }
 
-  const { success } = await ratelimit.limit(opts.ctx.clerkUserId);
+  /*   const { success } = await ratelimit.limit(opts.ctx.clerkUserId);
 
   if (!success) {
     throw new TRPCError({
       code: "TOO_MANY_REQUESTS"
     });
-  }
+  } */
 
   return opts.next({
     ctx: {
