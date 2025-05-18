@@ -20,7 +20,7 @@ interface BoardListProps {
 export const BoardList = ({ organizationId }: BoardListProps) => {
   return (
     <Suspense fallback={<BoardListSkeleton />}>
-      <ErrorBoundary fallback={<BoardListSkeleton />}>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
         <BoardListSuspense organizationId={organizationId} />
       </ErrorBoundary>
     </Suspense>

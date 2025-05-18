@@ -51,7 +51,7 @@ export const BoardTitleForm = ({ boardId }: BoardTitleFormProps) => {
   const onSubmit = (formData: FormData) => {
     const title = formData.get("title") as string;
     update.mutate({
-      boardId,
+      id: boardId,
       title
     });
   };
