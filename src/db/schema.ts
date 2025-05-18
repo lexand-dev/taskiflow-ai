@@ -13,6 +13,7 @@ import {
   createSelectSchema,
   createUpdateSchema
 } from "drizzle-zod";
+import { relations } from "drizzle-orm";
 
 // --- ENUMS ---
 export const action = pgEnum("action", ["CREATE", "UPDATE", "DELETE"]);
@@ -35,6 +36,10 @@ export const boards = pgTable("boards", {
     .defaultNow()
     .notNull()
 });
+
+export const boardsRelations = relations(boards, ({ many }) => ({
+  lists: many(lists)
+}));
 
 export const boardSelectSchema = createSelectSchema(boards);
 export const boardInsertSchema = createInsertSchema(boards);
@@ -63,6 +68,18 @@ export const lists = pgTable(
   ]
 );
 
+export const listsRelations = relations(lists, ({ one, many }) => ({
+  board: one(boards, {
+    fields: [lists.boardId],
+    references: [boards.id]
+  }),
+  cards: many(cards)
+}));
+
+export const listUpdateSchema = createUpdateSchema(lists);
+export const listInsertSchema = createInsertSchema(lists);
+export const listSelectSchema = createSelectSchema(lists);
+
 export const cards = pgTable(
   "cards",
   {
@@ -86,6 +103,14 @@ export const cards = pgTable(
     index("card_order_idx").on(table.listId, table.order)
   ]
 );
+
+// Definición de las relaciones para cards
+export const cardsRelations = relations(cards, ({ one }) => ({
+  list: one(lists, {
+    fields: [cards.listId],
+    references: [lists.id]
+  })
+}));
 
 export const auditLogs = pgTable("audit_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
