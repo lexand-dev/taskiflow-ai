@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Control } from "react-hook-form";
+import { Control, FieldValues } from "react-hook-form";
 import { Check, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { unsplash } from "@/lib/unsplash";
 import { defaultImages } from "@/constants/images";
+import { Random } from "unsplash-js/dist/methods/photos/types";
 
 import {
   FormControl,
@@ -20,7 +21,7 @@ import {
 
 interface FormPickerProps {
   name: string;
-  control: Control<any>;
+  control: Control<FieldValues>;
   label?: string;
   disabled?: boolean;
 }
@@ -31,21 +32,21 @@ export const FormPicker = ({
   label,
   disabled
 }: FormPickerProps) => {
-  const [images, setImages] = useState(defaultImages);
+  const [images, setImages] = useState<Random[]>(defaultImages);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
         const result = await unsplash.photos.getRandom({
-          collectionIds: ["317099"],
-          count: 9
+          collectionIds: ["317099"]
         });
 
         if (result && result.response) {
-          const newImages = result.response as Array<Record<string, any>>;
+          const newImages = result.response as Random[];
           setImages(newImages);
         } else {
+          console.error("Failed to get images from Unsplash");
           console.error("Failed to get images from Unsplash");
         }
       } catch (error) {
