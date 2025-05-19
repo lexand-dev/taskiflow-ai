@@ -46,7 +46,7 @@ export const listsRouter = createTRPCRouter({
             orderBy: [asc(cards.order)]
           }
         },
-        orderBy: [asc(lists.id)]
+        orderBy: [asc(lists.order)]
       });
 
       return result;
