@@ -46,6 +46,7 @@ export const Description = ({ data }: DescriptionProps) => {
   const update = trpc.cards.update.useMutation({
     onSuccess: () => {
       utils.lists.getMany.invalidate();
+      utils.cards.getOne.invalidate({ id: data.id });
       //TODO: Invalidate card-logs query
       toast.success(`Card description updated`);
       disableEditing();

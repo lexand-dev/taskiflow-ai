@@ -13,9 +13,10 @@ interface HeaderProps {
 }
 
 export const Header = ({ data }: HeaderProps) => {
+  const utils = trpc.useUtils();
   const update = trpc.cards.update.useMutation({
     onSuccess: (data) => {
-      // Invalidate card getOne query
+      utils.cards.getOne.invalidate({ id: data.id });
       // Invalidate card-logs query
       toast.success(`Renamed to "${data.title}"`);
       setTitle(data.title);
