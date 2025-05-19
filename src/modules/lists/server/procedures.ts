@@ -165,7 +165,7 @@ export const listsRouter = createTRPCRouter({
             id: z.string(),
             order: z.number(),
             title: z.string().optional(),
-            boardId: z.string().optional()
+            boardId: z.string()
           })
         )
       })
@@ -184,7 +184,7 @@ export const listsRouter = createTRPCRouter({
           .set({
             order: item.order
           })
-          .where(eq(lists.id, item.id))
+          .where(and(eq(lists.id, item.id), eq(lists.boardId, item.boardId)))
       );
 
       await Promise.all(transaction);

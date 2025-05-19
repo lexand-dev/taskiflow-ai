@@ -25,9 +25,11 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 
 export const ListContainer = ({ data, boardId }: ListContainerProps) => {
   const [orderedData, setOrderedData] = useState(data);
+  const utils = trpc.useUtils();
 
   const updateListOrder = trpc.lists.updateListOrder.useMutation({
     onSuccess: () => {
+      utils.lists.getMany.invalidate({ boardId });
       toast.success("List order updated");
     },
     onError: (error) => {
@@ -144,28 +146,26 @@ export const ListContainer = ({ data, boardId }: ListContainerProps) => {
   };
 
   return (
-    <>
-      <div className="flex h-full gap-x-1">
-        <BoardSidebar boardId={boardId} />
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="lists" type="list" direction="horizontal">
-            {(provided) => (
-              <ol
-                className="flex gap-x-3 h-full"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {orderedData.map((list, index) => (
-                  <ListItem key={list.id} data={list} index={index} />
-                ))}
-                {provided.placeholder}
-                <ListForm />
-                <div className="flex-shrink-0 w-1"></div>
-              </ol>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>
-    </>
+    <div className="flex h-full gap-x-1">
+      <BoardSidebar boardId={boardId} />
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="lists" type="list" direction="horizontal">
+          {(provided) => (
+            <ol
+              className="flex gap-x-3 h-full"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {orderedData.map((list, index) => (
+                <ListItem key={list.id} data={list} index={index} />
+              ))}
+              {provided.placeholder}
+              <ListForm />
+              <div className="flex-shrink-0 w-1"></div>
+            </ol>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   );
 };

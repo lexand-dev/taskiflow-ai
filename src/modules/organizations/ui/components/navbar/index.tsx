@@ -12,7 +12,7 @@ export const Navbar = async () => {
       <MobileSidebar />
       <div className="flex items-center gap-x-4">
         <Link href={`/organization/${orgId}`}>
-          <div className="hidden md:flex">
+          <div className="hidden md:flex items-center gap-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
               <img className="size-6 text-primary" src="/logo.svg" />
             </div>

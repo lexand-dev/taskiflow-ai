@@ -39,7 +39,7 @@ export const BoardListSuspense = ({ organizationId }: BoardListProps) => {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
       />
-      <div className="flex items-center font-semibold text-lg text-neutral-700">
+      <div className="flex items-center font-semibold text-lg dark:text-neutral-300">
         <User2 className="h-6 w-6 mr-2" />
         Your boards
       </div>
