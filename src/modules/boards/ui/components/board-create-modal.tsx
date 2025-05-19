@@ -81,7 +81,7 @@ export const BoardCreateModal = ({
             <FormPicker
               name="image"
               control={form.control}
-              label="Selecciona una imagen"
+              label="Select an image"
               disabled={create.isPending}
             />
             <FormField
