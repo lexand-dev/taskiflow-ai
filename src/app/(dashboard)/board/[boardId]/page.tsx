@@ -23,9 +23,6 @@ const BoardIdPage = async ({ params }: BoardIdPageProps) => {
   void trpc.lists.getMany.prefetch({
     boardId
   });
-  /*   void trpc.boards.getCards.prefetch({
-    boardId
-  }); */
 
   if (!orgId) {
     redirect("/select-org");

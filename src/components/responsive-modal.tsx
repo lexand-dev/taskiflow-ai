@@ -15,7 +15,7 @@ import {
 interface ResponsiveModalProps {
   children: React.ReactNode;
   open: boolean;
-  title: string;
+  title?: string;
   onOpenChange: (open: boolean) => void;
 }
 

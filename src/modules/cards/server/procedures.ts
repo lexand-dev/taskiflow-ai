@@ -211,5 +211,49 @@ export const cardsRouter = createTRPCRouter({
 
       await Promise.all(transaction);
       return items;
+    }),
+  copy: protectedProcedure
+    .input(
+      z.object({
+        id: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { orgId } = await auth();
+      const { id } = input;
+
+      if (!orgId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const [cardToCopy] = await db
+        .select()
+        .from(cards)
+        .where(eq(cards.id, id));
+
+      if (!cardToCopy) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
+      }
+
+      const [lastCard] = await db
+        .select({ order: cards.order })
+        .from(cards)
+        .where(eq(cards.listId, cardToCopy.listId))
+        .orderBy(desc(cards.order))
+        .limit(1);
+
+      const newOrder = lastCard ? lastCard.order + 1 : 1;
+
+      const [newCard] = await db
+        .insert(cards)
+        .values({
+          title: `${cardToCopy.title} - Copy`,
+          description: cardToCopy.description,
+          order: newOrder,
+          listId: cardToCopy.listId
+        })
+        .returning();
+
+      return newCard;
     })
 });

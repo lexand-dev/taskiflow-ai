@@ -39,39 +39,16 @@ export const listsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { boardId } = input;
 
-      const listsWithCards = await db
-        .select()
-        .from(lists)
-        .where(eq(lists.boardId, boardId))
-        .orderBy(asc(lists.order));
+      const result = await db.query.lists.findMany({
+        where: eq(lists.boardId, boardId),
+        with: {
+          cards: {
+            orderBy: [asc(cards.order)]
+          }
+        },
+        orderBy: [asc(lists.id)]
+      });
 
-      if (!listsWithCards) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-      const listss = listsWithCards.map((list) => ({
-        ...list,
-        cards: db
-          .select()
-          .from(cards)
-          .where(eq(cards.listId, list.id))
-          .orderBy(asc(cards.order))
-          .then((cards) => cards)
-      }));
-
-      const result = await Promise.all(
-        listss.map(async (list) => {
-          const cards = await list.cards;
-          return {
-            ...list,
-            cards: cards
-          };
-        })
-      );
-
-      if (!result) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-      console.log("lists", result);
       return result;
     }),
   create: protectedProcedure
@@ -212,5 +189,70 @@ export const listsRouter = createTRPCRouter({
 
       await Promise.all(transaction);
       return items;
+    }),
+  copy: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        boardId: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { orgId } = await auth();
+      const { id, boardId } = input;
+
+      if (!orgId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const listToCopy = await db.query.lists.findFirst({
+        where: and(eq(lists.id, id), eq(lists.boardId, boardId)),
+        with: {
+          cards: true
+        }
+      });
+
+      if (!listToCopy) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const [lastList] = await db
+        .select({ order: lists.order })
+        .from(lists)
+        .where(eq(lists.boardId, boardId))
+        .orderBy(desc(lists.order));
+
+      const newOrder = lastList ? lastList.order + 1 : 1;
+
+      const [list] = await db
+        .insert(lists)
+        .values({
+          boardId: listToCopy.boardId,
+          title: `${listToCopy.title} (copy)`,
+          order: newOrder
+        })
+        .returning();
+
+      const newcards = await Promise.all(
+        listToCopy.cards.map((card) => {
+          return db
+            .insert(cards)
+            .values({
+              title: card.title,
+              description: card.description,
+              order: card.order,
+              listId: list.id
+            })
+            .returning()
+            .then((data) => data[0]);
+        })
+      );
+
+      const newList = {
+        ...list,
+        cards: newcards
+      };
+
+      return newList;
     })
 });

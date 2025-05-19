@@ -39,15 +39,17 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
     }
   });
 
-  /*   const { execute: executeCopy } = useAction(copyList, {
+  const copyList = trpc.lists.copy.useMutation({
     onSuccess: (data) => {
+      utils.lists.getMany.invalidate();
       toast.success(`List "${data.title}" copied.`);
       closeRef.current?.click();
     },
     onError: (error) => {
-      toast.error(error);
+      console.error(error);
+      toast.error("Something went wrong");
     }
-  }); */
+  });
 
   const onDelete = (formData: FormData) => {
     const id = formData.get("id") as string;
@@ -55,11 +57,11 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
     remove.mutate({ id, boardId });
   };
 
-  /*   const onCopy = (formData: FormData) => {
+  const onCopy = (formData: FormData) => {
     const id = formData.get("id") as string;
     const boardId = formData.get("boardId") as string;
-    executeCopy({ id, boardId });
-  }; */
+    copyList.mutate({ id, boardId });
+  };
 
   return (
     <Popover>
@@ -79,7 +81,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
         >
           Add card...
         </Button>
-        {/* <form action={onCopy}>
+        <form action={onCopy}>
           <input hidden name="id" id="id" value={data.id} />
           <input hidden name="boardId" id="boardId" value={data.boardId} />
           <FormSubmit
@@ -88,7 +90,7 @@ export const ListOptions = ({ data, onAddCard }: ListOptionsProps) => {
           >
             Copy list...
           </FormSubmit>
-        </form> */}
+        </form>
         <Separator />
         <form action={onDelete}>
           <input hidden name="id" id="id" value={data.id} />

@@ -27,7 +27,22 @@ const BoardSectionSkeleton = () => {
       <div className="absolute inset-0 bg-black/10" />
       <main className="relative pt-28 h-full">
         <div className="pt-28 h-full overflow-x-auto animate-pulse">
-          <div className="h-6 w-1/2 bg-gray-300 rounded" />
+          <div className="flex items-center justify-between px-4">
+            <div className="w-1/2 h-8 bg-gray-300 rounded" />
+            <div className="w-1/4 h-8 bg-gray-300 rounded" />
+          </div>
+          <div className="py-4 px-1 h-full overflow-x-auto">
+            <div className="flex gap-x-3 h-full">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="w-[272px] shrink-0">
+                  <div className="h-8 bg-gray-300 rounded mb-2" />
+                  {[...Array(2)].map((_, j) => (
+                    <div key={j} className="h-10 bg-gray-300 rounded mb-2" />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     </div>
