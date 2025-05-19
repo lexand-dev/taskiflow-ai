@@ -6,8 +6,30 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { boards, boardUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { workflow } from "@/lib/workflow";
 
 export const boardsRouter = createTRPCRouter({
+  generateTitle: protectedProcedure
+    .input(z.object({ boardId: z.string().uuid() }))
+    .mutation(async ({ input }) => {
+      const { workflowRunId } = await workflow.trigger({
+        url: `${process.env.UPSTASH_WORKFLOW_URL}/api/board/workflows/title`,
+        body: { boardId: input.boardId }
+      });
+
+      return workflowRunId;
+    }),
+  generateDescription: protectedProcedure
+    .input(z.object({ boardId: z.string().uuid() }))
+    .mutation(async ({ input }) => {
+      const { workflowRunId } = await workflow.trigger({
+        url: `${process.env.UPSTASH_WORKFLOW_URL}/api/board/workflows/description`,
+        body: { boardId: input.boardId }
+      });
+      console.log("Workflow triggered with ID:", workflowRunId);
+
+      return workflowRunId;
+    }),
   getOne: protectedProcedure
     .input(
       z.object({

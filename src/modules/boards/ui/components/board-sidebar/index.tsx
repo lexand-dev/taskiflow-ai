@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const BoardSidebar = ({ boardId }: { boardId: string }) => {
   return (
     <div className="shrink-0 h-full w-[300px] select-none flex flex-col gap-4 overflow-y-auto px-2">
-      <Card className="py-4 h-64">
+      <Card className="py-4 h-76">
         <CardHeader>
           <CardTitle className="flex items-center">
             <FileText className="mr-2 h-4 w-4" />

@@ -6,6 +6,7 @@ import { useState, useRef, ComponentRef } from "react";
 import { trpc } from "@/trpc/client";
 import { FormInput } from "./form-input";
 import { Button } from "@/components/ui/button";
+import { Loader2Icon, SparklesIcon } from "lucide-react";
 
 interface BoardTitleFormProps {
   boardId: string;
@@ -30,6 +31,17 @@ export const BoardTitleForm = ({ boardId }: BoardTitleFormProps) => {
     onError: () => {
       toast.error("Error updating board");
       disableEditing();
+    }
+  });
+
+  const generateTitle = trpc.boards.generateTitle.useMutation({
+    onSuccess: () => {
+      toast.success("Title generation started", {
+        description: "This may take some time"
+      });
+    },
+    onError: () => {
+      toast.error("Error generating title");
     }
   });
 
@@ -75,6 +87,22 @@ export const BoardTitleForm = ({ boardId }: BoardTitleFormProps) => {
           className="text-lg font-bold px-[7px] py-1 h-7 bg-transparent
           focus-visible:outline-none focus-visible:ring-transparent border-none text-white"
         />
+        <div className="flex items-center gap-x-2">
+          <Button
+            size="icon"
+            variant="outline"
+            type="button"
+            className="rounded-full size-6 [&_svg]:size-3"
+            onClick={() => generateTitle.mutate({ boardId })}
+            disabled={generateTitle.isPending}
+          >
+            {generateTitle.isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <SparklesIcon />
+            )}
+          </Button>
+        </div>
       </form>
     );
   }
