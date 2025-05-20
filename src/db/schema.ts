@@ -123,7 +123,7 @@ export const auditLogs = pgTable("audit_logs", {
   entityId: uuid("entity_id").notNull(),
   entityType: entityType("entity_type").notNull(),
   entityTitle: varchar("entity_title", { length: 255 }),
-  userId: uuid("user_id").notNull(),
+  userId: text("user_id").notNull(),
   userImage: text("user_image"),
   userName: text("user_name"),
   createdAt: timestamp("created_at", { withTimezone: true })

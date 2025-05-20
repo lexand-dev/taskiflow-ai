@@ -2,11 +2,13 @@ import { createTRPCRouter } from "../init";
 import { listsRouter } from "@/modules/lists/server/procedures";
 import { cardsRouter } from "@/modules/cards/server/procedures";
 import { boardsRouter } from "@/modules/boards/server/procedures";
+import { auditLogsRouter } from "@/modules/activity/server/procedures";
 
 export const appRouter = createTRPCRouter({
   cards: cardsRouter,
   lists: listsRouter,
-  boards: boardsRouter
+  boards: boardsRouter,
+  auditLog: auditLogsRouter
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

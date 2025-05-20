@@ -7,6 +7,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { boards, boardUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { workflow } from "@/lib/workflow";
+import { ACTION, createAuditLog, ENTITY_TYPE } from "@/lib/create-audit-log";
 
 export const boardsRouter = createTRPCRouter({
   generateTitle: protectedProcedure
@@ -124,6 +125,13 @@ export const boardsRouter = createTRPCRouter({
         })
         .returning();
 
+      await createAuditLog({
+        entityId: data.id,
+        entityTitle: data.title,
+        entityType: ENTITY_TYPE.BOARD,
+        action: ACTION.CREATE
+      });
+
       return data;
     }),
   update: protectedProcedure
@@ -168,6 +176,13 @@ export const boardsRouter = createTRPCRouter({
         .where(and(eq(boards.id, id), eq(boards.orgId, orgId)))
         .returning();
 
+      await createAuditLog({
+        entityTitle: updateBoard.title,
+        entityId: updateBoard.id,
+        entityType: ENTITY_TYPE.BOARD,
+        action: ACTION.UPDATE
+      });
+
       if (!updateBoard) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
@@ -192,6 +207,13 @@ export const boardsRouter = createTRPCRouter({
         .delete(boards)
         .where(and(eq(boards.id, boardId), eq(boards.orgId, orgId)))
         .returning();
+
+      await createAuditLog({
+        entityId: deleteBoard.id,
+        entityTitle: deleteBoard.title,
+        entityType: ENTITY_TYPE.BOARD,
+        action: ACTION.DELETE
+      });
 
       if (!deleteBoard) {
         throw new TRPCError({ code: "NOT_FOUND" });

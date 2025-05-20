@@ -3,8 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
-import { desc, eq, asc } from "drizzle-orm";
-import { lists, cards, cardUpdateSchema } from "@/db/schema";
+import { desc, eq, asc, and } from "drizzle-orm";
+import { ACTION, createAuditLog, ENTITY_TYPE } from "@/lib/create-audit-log";
+import { lists, cards, cardUpdateSchema, auditLogs } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const cardsRouter = createTRPCRouter({
@@ -119,6 +120,13 @@ export const cardsRouter = createTRPCRouter({
         })
         .returning();
 
+      await createAuditLog({
+        entityId: newCard.id,
+        entityTitle: newCard.title,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTION.CREATE
+      });
+
       return newCard;
     }),
   update: protectedProcedure
@@ -147,6 +155,13 @@ export const cardsRouter = createTRPCRouter({
         .where(eq(cards.id, id))
         .returning();
 
+      await createAuditLog({
+        entityId: updatedCard.id,
+        entityTitle: updatedCard.title,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTION.UPDATE
+      });
+
       if (!updatedCard) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
       }
@@ -171,6 +186,13 @@ export const cardsRouter = createTRPCRouter({
         .delete(cards)
         .where(eq(cards.id, id))
         .returning();
+
+      await createAuditLog({
+        entityId: deletedCard.id,
+        entityTitle: deletedCard.title,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTION.DELETE
+      });
 
       if (!deletedCard) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
@@ -254,6 +276,46 @@ export const cardsRouter = createTRPCRouter({
         })
         .returning();
 
+      await createAuditLog({
+        entityId: newCard.id,
+        entityTitle: newCard.title,
+        entityType: ENTITY_TYPE.CARD,
+        action: ACTION.CREATE
+      });
+
       return newCard;
+    }),
+  logs: protectedProcedure
+    .input(
+      z.object({
+        cardId: z.string()
+      })
+    )
+    .query(async ({ input }) => {
+      const { orgId } = await auth();
+      const { cardId } = input;
+
+      if (!orgId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      const logs = await db
+        .select()
+        .from(auditLogs)
+        .where(
+          and(
+            eq(auditLogs.entityId, cardId),
+            eq(auditLogs.orgId, orgId),
+            eq(auditLogs.entityType, "CARD")
+          )
+        )
+        .orderBy(desc(auditLogs.createdAt))
+        .limit(3);
+
+      if (!logs) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
+      }
+
+      return logs;
     })
 });

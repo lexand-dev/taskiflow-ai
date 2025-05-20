@@ -6,6 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { desc, eq, and, asc } from "drizzle-orm";
 import { lists, listUpdateSchema, boards, cards } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { ACTION, createAuditLog, ENTITY_TYPE } from "@/lib/create-audit-log";
 
 export const listsRouter = createTRPCRouter({
   getOne: protectedProcedure
@@ -95,6 +96,13 @@ export const listsRouter = createTRPCRouter({
         })
         .returning();
 
+      await createAuditLog({
+        entityId: list.id,
+        entityTitle: list.title,
+        entityType: ENTITY_TYPE.LIST,
+        action: ACTION.CREATE
+      });
+
       return list;
     }),
   update: protectedProcedure
@@ -125,6 +133,13 @@ export const listsRouter = createTRPCRouter({
         .where(eq(lists.id, id))
         .returning();
 
+      await createAuditLog({
+        entityId: updateList.id,
+        entityTitle: updateList.title,
+        entityType: ENTITY_TYPE.LIST,
+        action: ACTION.UPDATE
+      });
+
       if (!updateList) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
@@ -150,6 +165,13 @@ export const listsRouter = createTRPCRouter({
         .delete(lists)
         .where(and(eq(lists.id, id), eq(lists.boardId, boardId)))
         .returning();
+
+      await createAuditLog({
+        entityId: deleteList.id,
+        entityTitle: deleteList.title,
+        entityType: ENTITY_TYPE.LIST,
+        action: ACTION.DELETE
+      });
 
       if (!deleteList) {
         throw new TRPCError({ code: "NOT_FOUND" });
@@ -252,6 +274,13 @@ export const listsRouter = createTRPCRouter({
         ...list,
         cards: newcards
       };
+
+      await createAuditLog({
+        entityId: newList.id,
+        entityTitle: newList.title,
+        entityType: ENTITY_TYPE.LIST,
+        action: ACTION.CREATE
+      });
 
       return newList;
     })
