@@ -2,4 +2,4 @@ import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
 
-export type AuditLog = inferRouterOutputs<AppRouter>["auditLogs"]["getMany"];
+export type AuditLog = inferRouterOutputs<AppRouter>["auditLog"]["getMany"];
