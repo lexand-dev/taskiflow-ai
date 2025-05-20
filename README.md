@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## TaskiFlow AI
+Aplicación para gestionar proyectos y tareas, mejorada con funciones de IA que optimizan la productividad (p. ej., subtareas sugeridas por IA y descripciones generadas automáticamente).
 
-## Getting Started
+### Características principales
+### 🔐 Autenticación y Gestión de Usuarios (Clerk)
+TaskFlow AI implementa Clerk como solución completa de autenticación y gestión de usuarios:
 
-First, run the development server:
+- Flujo de autenticación seguro: Registro, inicio y cierre de sesión con verificación integrada
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Interfaz personalizada: Componentes de Clerk adaptados al diseño de la aplicación
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Gestión de perfiles: UserButton de Clerk para edición simplificada de datos de usuario
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Protección de rutas: Middleware de Clerk para asegurar el acceso a páginas protegidas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🏢 Gestión de Organizaciones / Equipos (Clerk)
 
-## Learn More
+- Múltiples organizaciones: Soporte para usuarios que pertenecen a diferentes equipos
+- Organization Switcher: Cambio fluido entre diferentes organizaciones/equipos
+- Permisos basados en roles: Control granular sobre las acciones permitidas según el rol
 
-To learn more about Next.js, take a look at the following resources:
+### 📋 Gestión de Tableros
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Creación y personalización de tableros para diferentes proyectos
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🤏 Funcionalidad Drag & Drop
 
-## Deploy on Vercel
+↔️ Mover tarjetas entre listas
+↕️ Reordenar tarjetas dentro de una lista
+📊 Reorganizar listas completas
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 🤖 Mejoras potenciadas por IA
+✍️ Generador de descripciones AI:
+Auto-generación de descripciones para tableros
+Auto-generación de descripciones para tarjetas
+✍️ Generador de títulos AI:
+Auto-generación de títulos para tableros
+Auto-generación de títulos para tarjetas
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Próximamente:
+
+- Subcriptions con Clerk y su entorno de herramientas.
+- Integrar labels para clasificar tareas
+- Añadir sistema de fechas para deadlines
+- Adjuntar archivos
+- Features Premium con AI
+
+
+### Enlaces
+Proyecto: [(https://taskiflow-ai.vercel.app/)](https://taskiflow-ai.vercel.app/)
+Repositorio: [(https://github.com/lexand-dev/taskiflow-ai)](https://github.com/lexand-dev/taskiflow-ai)
+
+
+
+![Image](https://github.com/user-attachments/assets/d9c8d03b-916c-4459-8c93-94007b6b9605)
+
+![Image](https://github.com/user-attachments/assets/a821e1f5-71dc-4e37-aea6-7aa9e2340036)
+
+![Image](https://github.com/user-attachments/assets/43259364-dcf2-405c-864e-982523658fcd)
+
+![Image](https://github.com/user-attachments/assets/c898ff3f-4532-4057-b846-881591f6602b)
+
+![Image](https://github.com/user-attachments/assets/0d9952a2-bbf1-4137-9294-6f6925502ec1)
+
+
