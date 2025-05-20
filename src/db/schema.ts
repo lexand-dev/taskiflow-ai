@@ -133,3 +133,15 @@ export const auditLogs = pgTable("audit_logs", {
     .defaultNow()
     .notNull()
 });
+
+export const orgLimit = pgTable("org_limit", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orgId: varchar("org_id", { length: 255 }).notNull(),
+  limit: integer("limit").default(0).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull()
+});

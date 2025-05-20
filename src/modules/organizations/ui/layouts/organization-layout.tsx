@@ -1,7 +1,8 @@
+import React from "react";
+
+import { Sidebar } from "../components/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { InfoSection } from "../sections/info-section";
-import { Sidebar } from "../components/sidebar";
-import React from "react";
 
 export const OrganizationLayout = ({
   children
@@ -15,7 +16,7 @@ export const OrganizationLayout = ({
           <Sidebar />
         </div>
         <div className="w-full mb-20">
-          <InfoSection isPro />
+          <InfoSection isPro={false} />
           <Separator className="my-4" />
           <div>{children}</div>
         </div>

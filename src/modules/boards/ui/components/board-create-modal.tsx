@@ -61,7 +61,7 @@ export const BoardCreateModal = ({
     },
     onError: (e) => {
       console.error(e);
-      toast.error("Something went wrong");
+      toast.error(e.message);
     }
   });
 

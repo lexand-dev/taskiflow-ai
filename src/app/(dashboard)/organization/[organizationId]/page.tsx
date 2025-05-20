@@ -13,6 +13,7 @@ const OrganizationIdPage = async ({ params }: PageProps) => {
   void trpc.boards.getMany.prefetch({
     orgId: organizationId
   });
+  void trpc.orgLimit.getCount.prefetch();
   return (
     <HydrateClient>
       <BoardList organizationId={organizationId} />

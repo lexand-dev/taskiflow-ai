@@ -29,6 +29,9 @@ export const BoardList = ({ organizationId }: BoardListProps) => {
 
 export const BoardListSuspense = ({ organizationId }: BoardListProps) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const [availableCount] = trpc.orgLimit.getCount.useSuspenseQuery();
+
   const [boards] = trpc.boards.getMany.useSuspenseQuery({
     orgId: organizationId
   });
@@ -66,7 +69,9 @@ export const BoardListSuspense = ({ organizationId }: BoardListProps) => {
           >
             <PlusIcon />
           </Button>
-          <span className="text-xs">{`${MAX_FREE_BOARDS} remaining`}</span>
+          <span className="text-xs">{`${
+            MAX_FREE_BOARDS - availableCount
+          } remaining`}</span>
           <Hint
             sideOffset={40}
             description={`

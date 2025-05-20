@@ -3,11 +3,16 @@ import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/db";
 import { TRPCError } from "@trpc/server";
+import { workflow } from "@/lib/workflow";
 import { and, desc, eq } from "drizzle-orm";
 import { boards, boardUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { workflow } from "@/lib/workflow";
 import { ACTION, createAuditLog, ENTITY_TYPE } from "@/lib/create-audit-log";
+import {
+  incrementAvailableCount,
+  checkAvailableCount,
+  decreaseAvailableCount
+} from "@/lib/org-limit";
 
 export const boardsRouter = createTRPCRouter({
   generateTitle: protectedProcedure
@@ -92,6 +97,16 @@ export const boardsRouter = createTRPCRouter({
         });
       }
 
+      const canCreate = await checkAvailableCount();
+
+      if (!canCreate) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "You have reached your limit of free boards. Please upgrade to a paid plan to create more."
+        });
+      }
+
       const [
         imageId,
         imageThumbUrl,
@@ -124,6 +139,8 @@ export const boardsRouter = createTRPCRouter({
           imageUserName
         })
         .returning();
+
+      await incrementAvailableCount();
 
       await createAuditLog({
         entityId: data.id,
@@ -207,6 +224,8 @@ export const boardsRouter = createTRPCRouter({
         .delete(boards)
         .where(and(eq(boards.id, boardId), eq(boards.orgId, orgId)))
         .returning();
+
+      await decreaseAvailableCount();
 
       await createAuditLog({
         entityId: deleteBoard.id,
