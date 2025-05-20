@@ -68,11 +68,6 @@ export const CardModal = ({ task, isOpen, onClose }: CardModalProps) => {
                 </div>
               </TabsContent>
               <TabsContent value="activity" className="space-y-4">
-                <div className="flex flex-col gap-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    No activity yet
-                  </p>
-                </div>
                 {!auditLogsData ? (
                   <Activity.Skeleton />
                 ) : (
