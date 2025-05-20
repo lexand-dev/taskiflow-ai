@@ -17,7 +17,8 @@ export const Header = ({ data }: HeaderProps) => {
   const update = trpc.cards.update.useMutation({
     onSuccess: (data) => {
       utils.cards.getOne.invalidate({ id: data.id });
-      // Invalidate card-logs query
+      utils.cards.logs.invalidate({ cardId: data.id });
+      utils.lists.getMany.invalidate();
       toast.success(`Renamed to "${data.title}"`);
       setTitle(data.title);
     },

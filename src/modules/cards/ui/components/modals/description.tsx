@@ -47,7 +47,7 @@ export const Description = ({ data }: DescriptionProps) => {
     onSuccess: () => {
       utils.lists.getMany.invalidate();
       utils.cards.getOne.invalidate({ id: data.id });
-      //TODO: Invalidate card-logs query
+      utils.cards.logs.invalidate({ cardId: data.id });
       toast.success(`Card description updated`);
       disableEditing();
     },

@@ -14,6 +14,7 @@ import { Actions } from "./action";
 import { ICard } from "@/modules/cards/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { Activity } from "./activity";
 /* import { ErrorBoundary } from "react-error-boundary"; */
 
 interface CardModalProps {
@@ -30,6 +31,10 @@ export const CardModal = ({ task, isOpen, onClose }: CardModalProps) => {
 
   const [cardData] = trpc.cards.getOne.useSuspenseQuery({
     id: task.id
+  });
+
+  const [auditLogsData] = trpc.cards.logs.useSuspenseQuery({
+    cardId: task.id
   });
 
   return (
@@ -68,7 +73,11 @@ export const CardModal = ({ task, isOpen, onClose }: CardModalProps) => {
                     No activity yet
                   </p>
                 </div>
-                {/* Aquí iría el componente Activity si lo necesitas */}
+                {!auditLogsData ? (
+                  <Activity.Skeleton />
+                ) : (
+                  <Activity items={auditLogsData} />
+                )}
               </TabsContent>
             </Tabs>
           </div>
@@ -90,7 +99,7 @@ export const CardModalSkeleton = () => {
             </DialogTitle>
           </DialogHeader>
           <Description.Skeleton />
-          {/*   <Activity.Skeleton /> */}
+          <Activity.Skeleton />
         </div>
       </DialogContent>
     </Dialog>
