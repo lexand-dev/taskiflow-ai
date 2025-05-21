@@ -13,7 +13,7 @@ export const Navbar = async () => {
   return (
     <div className="fixed top-0 w-full h-14 px-4 shadow-sm border-b flex items-center">
       <div className="md:max-w-screen-2xl mx-auto flex items-center w-full justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link prefetch href="/" className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
             <img className="size-6 text-primary" src="/logo.svg" />
           </div>
@@ -24,10 +24,12 @@ export const Navbar = async () => {
         <div className="space-x-4 md:block md:w-auto flex items-center justify-between w-full">
           <div className="flex items-center justify-center space-x-2">
             <Button size="sm" variant="outline" asChild>
-              <Link href="/sign-in">Login</Link>
+              <Link prefetch href="/sign-in">
+                Login
+              </Link>
             </Button>
             <Button size="sm" asChild>
-              <Link href="/sign-up" className="text-white">
+              <Link prefetch href="/sign-up" className="text-white">
                 Get Taskiflow for free
               </Link>
             </Button>

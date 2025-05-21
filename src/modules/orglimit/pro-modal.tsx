@@ -37,7 +37,9 @@ export const ProModal = ({
           </ul>
         </div>
         <Button className="text-white/80">
-          <Link href={`/organization/${orgId}/billing`}>Upgrade</Link>
+          <Link prefetch href={`/organization/${orgId}/billing`}>
+            Upgrade
+          </Link>
         </Button>
       </div>
     </ResponsiveModal>

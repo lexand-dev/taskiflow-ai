@@ -5,7 +5,7 @@ export const Footer = () => {
   return (
     <div className="fixed bottom-0 w-full p-4 border-t">
       <div className="md:max-w-screen-2xl mx-auto flex items-center w-full justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link prefetch href="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
             <img className="size-6 text-primary" src="/logo.svg" />
           </div>

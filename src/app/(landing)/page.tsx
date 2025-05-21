@@ -57,7 +57,7 @@ const MarketingPage = () => {
 
         <div className="flex items-center justify-center space-x-4 mt-8">
           <Button size="lg" className="h-12 px-8">
-            <Link href="/sign-up" className="text-white">
+            <Link prefetch href="/sign-up" className="text-white">
               Get Started for Free
             </Link>
           </Button>

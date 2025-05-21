@@ -11,7 +11,7 @@ export const Navbar = async () => {
     <nav className="fixed z-50 top-0 px-4 w-full h-14 border-b shadow-sm flex items-center bg-background">
       <MobileSidebar />
       <div className="flex items-center gap-x-4">
-        <Link href={`/organization/${orgId}`}>
+        <Link prefetch href={`/organization/${orgId}`}>
           <div className="hidden md:flex items-center gap-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
               <img className="size-6 text-primary" src="/logo.svg" />

@@ -74,7 +74,7 @@ export const Sidebar = ({ storageKey = "t-sidebar-state" }: SidebarProps) => {
           variant="ghost"
           className="ml-auto"
         >
-          <Link href="/select-org">
+          <Link prefetch href="/select-org">
             <Plus className="h-4 w-4" />
           </Link>
         </Button>
