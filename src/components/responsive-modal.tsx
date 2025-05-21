@@ -44,7 +44,7 @@ export const ResponsiveModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-center text-black/80">
+          <DialogTitle className="text-center text-black/80 dark:text-white/80">
             {title}
           </DialogTitle>
         </DialogHeader>
