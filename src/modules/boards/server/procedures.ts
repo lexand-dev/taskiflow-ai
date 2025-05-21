@@ -98,8 +98,10 @@ export const boardsRouter = createTRPCRouter({
       }
 
       const canCreate = await checkAvailableCount();
+      const { has } = await auth();
+      const isPro = has({ plan: "pro" });
 
-      if (!canCreate) {
+      if (!canCreate && !isPro) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message:

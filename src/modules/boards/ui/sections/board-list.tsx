@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { HelpCircle, PlusIcon, User2 } from "lucide-react";
@@ -29,6 +30,8 @@ export const BoardList = ({ organizationId }: BoardListProps) => {
 
 export const BoardListSuspense = ({ organizationId }: BoardListProps) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const { has } = useAuth();
+  const isPro = has?.({ plan: "pro" });
 
   const [availableCount] = trpc.orgLimit.getCount.useSuspenseQuery();
 
@@ -69,9 +72,11 @@ export const BoardListSuspense = ({ organizationId }: BoardListProps) => {
           >
             <PlusIcon />
           </Button>
-          <span className="text-xs">{`${
-            MAX_FREE_BOARDS - availableCount
-          } remaining`}</span>
+          <span className="text-xs">
+            {isPro
+              ? "Unlimited"
+              : `${MAX_FREE_BOARDS - availableCount} remaining`}
+          </span>
           <Hint
             sideOffset={40}
             description={`

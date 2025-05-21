@@ -1,9 +1,19 @@
 import { PricingTable } from "@clerk/nextjs";
 
-export default function Page() {
+interface PageProps {
+  params: Promise<{ organizationId: string }>;
+}
+
+export const BillingPage = async ({ params }: PageProps) => {
+  const { organizationId } = await params;
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem" }}>
-      <PricingTable />
+      <PricingTable
+        forOrganizations
+        newSubscriptionRedirectUrl={`/organization/${organizationId}`}
+      />
     </div>
   );
-}
+};
+
+export default BillingPage;
