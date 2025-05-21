@@ -4,7 +4,7 @@ interface PageProps {
   params: Promise<{ organizationId: string }>;
 }
 
-export const BillingPage = async ({ params }: PageProps) => {
+const BillingPage = async ({ params }: PageProps) => {
   const { organizationId } = await params;
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem" }}>
